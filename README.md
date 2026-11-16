@@ -5,9 +5,6 @@ video or a YouTube link, watch with subtitles, and tap any word you don't
 know. Linguaplay pauses, explains it, and keeps it for spaced-repetition
 review.
 
-> The app window and in-app header still say "Video Learn"; Linguaplay is the
-> repository name.
-
 ![Start screen: drop a video or paste a link](docs/screenshots/start-screen.png)
 
 ## Features
@@ -145,6 +142,10 @@ docs/screenshots/   screenshots used above
   `yt-dlp` first (`yt-dlp -U`).
 - Downloaded videos live in the app data directory under `youtube_cache/` and
   are capped at 3 GB (oldest removed first).
+- The app identifier is still `com.videolearn.app` (and the browser-storage
+  keys start with `videoLearn`), from before the rename. They decide where
+  saved words, downloads, models and settings live, so changing them would
+  make existing data appear to vanish.
 - `Cargo.toml` turns incremental compilation off for dev builds, because the
   mixed optimisation levels intermittently failed to link with incremental on.
 

@@ -1,6 +1,6 @@
 # Linguaplay — Architecture
 
-Linguaplay (the app window still says "Video Learn") is a Tauri 2 desktop app: a SvelteKit/Svelte 5 frontend (TypeScript,
+Linguaplay is a Tauri 2 desktop app: a SvelteKit/Svelte 5 frontend (TypeScript,
 compiled to static assets, `ssr=false`) driving a Rust backend over Tauri's IPC
 bridge. The backend wraps libVLC for playback and shells out to a few
 external tools (`yt-dlp` with `ffmpeg`, `llama-cli`, `curl`, `tar`) for features libVLC and

@@ -130,7 +130,7 @@ async fn lookup_wikipedia(client: &reqwest::Client, word: &str) -> Result<WordDe
 
     let response = client
         .get(&url)
-        .header("User-Agent", "video-learn (github.com)")
+        .header("User-Agent", "Linguaplay (github.com/Emindu/Linguaplay)")
         .send()
         .await
         .map_err(|_| format!("No definition found for \"{word}\"."))?;

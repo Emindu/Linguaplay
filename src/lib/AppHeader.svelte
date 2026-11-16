@@ -107,9 +107,9 @@
       {#if mobileMeta}<p class="mobile-title-meta">{mobileMeta}</p>{/if}
     </div>
   {:else}
-    <a class="brand" href="/" onclick={goHome} aria-label="Video Learn — home">
+    <a class="brand" href="/" onclick={goHome} aria-label="Linguaplay — home">
       <span class="brand-dot"></span>
-      <span class="brand-name">Video Learn</span>
+      <span class="brand-name">Linguaplay</span>
     </a>
   {/if}
 
