@@ -1,0 +1,1206 @@
+/* Shared design system for all routes — ported from the sibling epub-reader
+   app's palette/typography/shapes so both apps feel like one family. Loaded
+   once via +layout.svelte so every page shares these tokens and common
+   component classes (.btn*, .icon-btn, .nav-pill, .modal-backdrop, the
+   AI-explain block, .hint/.error-banner) instead of redefining them.
+
+   Pages may still define their own `--player-*` tokens (see the video
+   player's always-dark chrome) — components below read those first and
+   fall back to the plain --color-* tokens, so the same rule works whether
+   it's rendered on a light page or inside the dark player card. */
+
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* Design tokens: "Paper" (light) and "Lamplight" (dark), from the Video Learn
+   design system. Words are Newsreader serif, controls are Figtree sans, time
+   is JetBrains Mono. The video stage is always dark (--stage-*). Other theme
+   presets below redefine only the paper-side --color-* tokens. */
+:root {
+  /* Paper-side colour tokens; the default theme blocks below override these. */
+  --color-bg: #f6f1e8;
+  --color-surface: #fffcf6;
+  --color-surface-hover: #ede5d7;
+  --color-text: #24201b;
+  --color-text-muted: #5e574c;
+  --color-text-faint: #6d6557;
+  --color-border: #e3d9c8;
+  --color-border-strong: #978872;
+  --chrome-bg: rgba(246, 241, 232, 0.88);
+  --color-accent: #a84a22;
+  --color-on-accent: #fffcf6;
+
+  /* Status + highlighter: fixed across theme presets, flipped per appearance. */
+  --color-danger: #a8321f;
+  --color-success: #3f6b3a;
+  --color-info: #2f5f86;
+  --color-marker: #f3d77e;
+  --color-focus: var(--color-accent);
+
+  /* The video stage: always dark, in every theme. */
+  --stage: #15130f;
+  --stage-raised: #2a2620;
+  --stage-ink: #f3ede3;
+  --stage-muted: #b8ae9f;
+  --stage-accent: #e38d5f;
+  --stage-marker: #e8b84a;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(70, 45, 20, 0.07);
+  --shadow-md: 0 1px 3px rgba(70, 45, 20, 0.06), 0 10px 24px rgba(70, 45, 20, 0.08);
+  --shadow-lg: 0 4px 12px rgba(70, 45, 20, 0.08), 0 24px 48px rgba(70, 45, 20, 0.12);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur-med: 260ms;
+
+  --font-ui: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+
+  color-scheme: light;
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Status colours, stage and shadows follow appearance, independent of preset. */
+html[data-appearance="light"] {
+  color-scheme: light;
+}
+
+html[data-appearance="dark"] {
+  color-scheme: dark;
+  --color-danger: #f0907f;
+  --color-success: #93c08a;
+  --color-info: #8fbade;
+  --color-marker: #5e4a1a;
+  --color-on-accent: #1b120c;
+  --stage: #0d0b09;
+  --stage-raised: #211d18;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4), 0 10px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.45), 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- theme presets ----
+   Ported from epub-reader's `html[data-theme][data-appearance]` system:
+   16 presets (default + 15 named) × light/dark, fully user-controlled via
+   the Theme picker (src/lib/ThemeSwitcher.svelte) — not synced to OS
+   preference, matching the sibling app exactly. See src/lib/themeSettings.ts
+   for the catalog and src/routes/+layout.svelte for how these attributes
+   get set on <html>. */
+
+html[data-theme="default"][data-appearance="light"] {
+  --color-bg: #f6f1e8;
+  --color-surface: #fffcf6;
+  --color-surface-hover: #ede5d7;
+  --color-text: #24201b;
+  --color-text-muted: #5e574c;
+  --color-text-faint: #6d6557;
+  --color-border: #e3d9c8;
+  --color-border-strong: #978872;
+  --chrome-bg: rgba(246, 241, 232, 0.88);
+  --color-accent: #a84a22;
+}
+html[data-theme="default"][data-appearance="dark"] {
+  --color-bg: #16130f;
+  --color-surface: #1f1b16;
+  --color-surface-hover: #29241d;
+  --color-text: #eee6d8;
+  --color-text-muted: #b2a897;
+  --color-text-faint: #968c7c;
+  --color-border: #322c23;
+  --color-border-strong: #7a6d57;
+  --chrome-bg: rgba(22, 19, 15, 0.88);
+  --color-accent: #e38d5f;
+}
+
+html[data-theme="flexoki"][data-appearance="light"] {
+  --color-bg: #fffcf0;
+  --color-surface: #f2f0e5;
+  --color-surface-hover: #e6e4d9;
+  --color-text: #100f0f;
+  --color-text-muted: #6f6e69;
+  --color-text-faint: #b7b5ac;
+  --color-border: #e6e4d9;
+  --color-border-strong: #cecdc3;
+  --chrome-bg: rgba(255, 252, 240, 0.85);
+  --color-accent: #af3029;
+}
+html[data-theme="flexoki"][data-appearance="dark"] {
+  --color-bg: #100f0f;
+  --color-surface: #1c1b1a;
+  --color-surface-hover: #282726;
+  --color-text: #cecdc3;
+  --color-text-muted: #878580;
+  --color-text-faint: #575653;
+  --color-border: #282726;
+  --color-border-strong: #403e3c;
+  --chrome-bg: rgba(16, 15, 15, 0.85);
+  --color-accent: #d14d41;
+}
+
+html[data-theme="ayu"][data-appearance="light"] {
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f3f4f5;
+  --color-text: #5c6773;
+  --color-text-muted: #828c99;
+  --color-text-faint: #abb0b6;
+  --color-border: #e6e8ea;
+  --color-border-strong: #cdd1d5;
+  --chrome-bg: rgba(250, 250, 250, 0.85);
+  --color-accent: #f29718;
+}
+html[data-theme="ayu"][data-appearance="dark"] {
+  --color-bg: #0f1419;
+  --color-surface: #14191f;
+  --color-surface-hover: #1a2127;
+  --color-text: #e6e1cf;
+  --color-text-muted: #5c6773;
+  --color-text-faint: #3e4b59;
+  --color-border: #1a2127;
+  --color-border-strong: #242d35;
+  --chrome-bg: rgba(15, 20, 25, 0.85);
+  --color-accent: #ffb454;
+}
+
+html[data-theme="catppuccin"][data-appearance="light"] {
+  --color-bg: #eff1f5;
+  --color-surface: #e6e9ef;
+  --color-surface-hover: #ccd0da;
+  --color-text: #4c4f69;
+  --color-text-muted: #6c6f85;
+  --color-text-faint: #9ca0b0;
+  --color-border: #bcc0cc;
+  --color-border-strong: #acb0be;
+  --chrome-bg: rgba(239, 241, 245, 0.85);
+  --color-accent: #8839ef;
+}
+html[data-theme="catppuccin"][data-appearance="dark"] {
+  --color-bg: #1e1e2e;
+  --color-surface: #181825;
+  --color-surface-hover: #313244;
+  --color-text: #cdd6f4;
+  --color-text-muted: #a6adc8;
+  --color-text-faint: #585b70;
+  --color-border: #313244;
+  --color-border-strong: #45475a;
+  --chrome-bg: rgba(30, 30, 46, 0.85);
+  --color-accent: #cba6f7;
+}
+
+html[data-theme="everforest"][data-appearance="light"] {
+  --color-bg: #fdf6e3;
+  --color-surface: #f4f0d9;
+  --color-surface-hover: #efebd4;
+  --color-text: #5c6a72;
+  --color-text-muted: #829181;
+  --color-text-faint: #93b259;
+  --color-border: #e6e2cc;
+  --color-border-strong: #d3c6aa;
+  --chrome-bg: rgba(253, 246, 227, 0.85);
+  --color-accent: #8da101;
+}
+html[data-theme="everforest"][data-appearance="dark"] {
+  --color-bg: #2d353b;
+  --color-surface: #272e33;
+  --color-surface-hover: #343f44;
+  --color-text: #d3c6aa;
+  --color-text-muted: #859289;
+  --color-text-faint: #475258;
+  --color-border: #343f44;
+  --color-border-strong: #3d484d;
+  --chrome-bg: rgba(45, 53, 59, 0.85);
+  --color-accent: #a6b46c;
+}
+
+html[data-theme="gruvbox"][data-appearance="light"] {
+  --color-bg: #fbf1c7;
+  --color-surface: #f2e5bc;
+  --color-surface-hover: #ebdbb2;
+  --color-text: #3c3836;
+  --color-text-muted: #7c6f64;
+  --color-text-faint: #a89984;
+  --color-border: #d5c4a1;
+  --color-border-strong: #bdae93;
+  --chrome-bg: rgba(251, 241, 199, 0.85);
+  --color-accent: #af3a03;
+}
+html[data-theme="gruvbox"][data-appearance="dark"] {
+  --color-bg: #282828;
+  --color-surface: #1d2021;
+  --color-surface-hover: #3c3836;
+  --color-text: #ebdbb2;
+  --color-text-muted: #a89984;
+  --color-text-faint: #665c54;
+  --color-border: #3c3836;
+  --color-border-strong: #504945;
+  --chrome-bg: rgba(40, 40, 40, 0.85);
+  --color-accent: #fe8019;
+}
+
+html[data-theme="nord"][data-appearance="light"] {
+  --color-bg: #eceff4;
+  --color-surface: #e5e9f0;
+  --color-surface-hover: #d8dee9;
+  --color-text: #2e3440;
+  --color-text-muted: #4c566a;
+  --color-text-faint: #d8dee9;
+  --color-border: #d8dee9;
+  --color-border-strong: #c2d0e7;
+  --chrome-bg: rgba(236, 239, 244, 0.85);
+  --color-accent: #5e81ac;
+}
+html[data-theme="nord"][data-appearance="dark"] {
+  --color-bg: #2e3440;
+  --color-surface: #242933;
+  --color-surface-hover: #3b4252;
+  --color-text: #eceff4;
+  --color-text-muted: #d8dee9;
+  --color-text-faint: #4c566a;
+  --color-border: #3b4252;
+  --color-border-strong: #434c5e;
+  --chrome-bg: rgba(46, 52, 64, 0.85);
+  --color-accent: #88c0d0;
+}
+
+html[data-theme="rosepine"][data-appearance="light"] {
+  --color-bg: #faf4ed;
+  --color-surface: #fffaf3;
+  --color-surface-hover: #f2e9e1;
+  --color-text: #575279;
+  --color-text-muted: #797593;
+  --color-text-faint: #9893a5;
+  --color-border: #dfdad9;
+  --color-border-strong: #cecacd;
+  --chrome-bg: rgba(250, 244, 237, 0.85);
+  --color-accent: #b4637a;
+}
+html[data-theme="rosepine"][data-appearance="dark"] {
+  --color-bg: #191724;
+  --color-surface: #1f1d2e;
+  --color-surface-hover: #26233a;
+  --color-text: #e0def4;
+  --color-text-muted: #908caa;
+  --color-text-faint: #6e6a86;
+  --color-border: #26233a;
+  --color-border-strong: #44415a;
+  --chrome-bg: rgba(25, 23, 36, 0.85);
+  --color-accent: #ebbcba;
+}
+
+html[data-theme="solarized"][data-appearance="light"] {
+  --color-bg: #fdf6e3;
+  --color-surface: #eee8d5;
+  --color-surface-hover: #e5ddc5;
+  --color-text: #657b83;
+  --color-text-muted: #93a1a1;
+  --color-text-faint: #586e75;
+  --color-border: #eee8d5;
+  --color-border-strong: #d0c8b2;
+  --chrome-bg: rgba(253, 246, 227, 0.85);
+  --color-accent: #cb4b16;
+}
+html[data-theme="solarized"][data-appearance="dark"] {
+  --color-bg: #002b36;
+  --color-surface: #073642;
+  --color-surface-hover: #003d4c;
+  --color-text: #839496;
+  --color-text-muted: #586e75;
+  --color-text-faint: #93a1a1;
+  --color-border: #073642;
+  --color-border-strong: #144956;
+  --chrome-bg: rgba(0, 43, 54, 0.85);
+  --color-accent: #dc322f;
+}
+
+html[data-theme="parchment"][data-appearance="light"] {
+  --color-bg: #f4ecd8;
+  --color-surface: #fbf4e3;
+  --color-surface-hover: #ece2c9;
+  --color-text: #4b4235;
+  --color-text-muted: #7c7059;
+  --color-text-faint: #b0a488;
+  --color-border: #e6dcc3;
+  --color-border-strong: #d5c8a8;
+  --chrome-bg: rgba(244, 236, 216, 0.85);
+  --color-accent: #a6642c;
+}
+html[data-theme="parchment"][data-appearance="dark"] {
+  --color-bg: #211e18;
+  --color-surface: #2a261f;
+  --color-surface-hover: #363024;
+  --color-text: #e4dac4;
+  --color-text-muted: #a89a7e;
+  --color-text-faint: #6b6250;
+  --color-border: #363024;
+  --color-border-strong: #46402f;
+  --chrome-bg: rgba(33, 30, 24, 0.85);
+  --color-accent: #d0925a;
+}
+
+html[data-theme="almond"][data-appearance="light"] {
+  --color-bg: #f7f2e9;
+  --color-surface: #fffaf1;
+  --color-surface-hover: #efe8da;
+  --color-text: #423b31;
+  --color-text-muted: #7a7060;
+  --color-text-faint: #b2a68f;
+  --color-border: #ebe3d4;
+  --color-border-strong: #dbd0ba;
+  --chrome-bg: rgba(247, 242, 233, 0.85);
+  --color-accent: #9a6a3c;
+}
+html[data-theme="almond"][data-appearance="dark"] {
+  --color-bg: #1f1d19;
+  --color-surface: #27251f;
+  --color-surface-hover: #322f28;
+  --color-text: #e8dfcf;
+  --color-text-muted: #a99f8b;
+  --color-text-faint: #6c6455;
+  --color-border: #322f28;
+  --color-border-strong: #423e35;
+  --chrome-bg: rgba(31, 29, 25, 0.85);
+  --color-accent: #c99a63;
+}
+
+html[data-theme="sage"][data-appearance="light"] {
+  --color-bg: #e9efe4;
+  --color-surface: #f1f5ec;
+  --color-surface-hover: #dde5d5;
+  --color-text: #384031;
+  --color-text-muted: #66735c;
+  --color-text-faint: #9aa88d;
+  --color-border: #d9e2d0;
+  --color-border-strong: #c3d0b7;
+  --chrome-bg: rgba(233, 239, 228, 0.85);
+  --color-accent: #5f7d4f;
+}
+html[data-theme="sage"][data-appearance="dark"] {
+  --color-bg: #1c221a;
+  --color-surface: #242b21;
+  --color-surface-hover: #2e362a;
+  --color-text: #d3ddc6;
+  --color-text-muted: #93a184;
+  --color-text-faint: #5d6a51;
+  --color-border: #2e362a;
+  --color-border-strong: #3b4535;
+  --chrome-bg: rgba(28, 34, 26, 0.85);
+  --color-accent: #8fb072;
+}
+
+html[data-theme="mist"][data-appearance="light"] {
+  --color-bg: #eceff2;
+  --color-surface: #f4f6f8;
+  --color-surface-hover: #dfe4e9;
+  --color-text: #333a41;
+  --color-text-muted: #626b74;
+  --color-text-faint: #9aa3ad;
+  --color-border: #dde2e7;
+  --color-border-strong: #c7cfd7;
+  --chrome-bg: rgba(236, 239, 242, 0.85);
+  --color-accent: #4a6f8a;
+}
+html[data-theme="mist"][data-appearance="dark"] {
+  --color-bg: #1b1f24;
+  --color-surface: #23282e;
+  --color-surface-hover: #2d333a;
+  --color-text: #ccd4dd;
+  --color-text-muted: #8b95a1;
+  --color-text-faint: #59616b;
+  --color-border: #2d333a;
+  --color-border-strong: #3a424b;
+  --chrome-bg: rgba(27, 31, 36, 0.85);
+  --color-accent: #7ba7c9;
+}
+
+html[data-theme="blush"][data-appearance="light"] {
+  --color-bg: #f5ece9;
+  --color-surface: #fcf4f1;
+  --color-surface-hover: #ecdfda;
+  --color-text: #443a3a;
+  --color-text-muted: #7d6d6d;
+  --color-text-faint: #b39fa0;
+  --color-border: #eaddd8;
+  --color-border-strong: #dbc8c2;
+  --chrome-bg: rgba(245, 236, 233, 0.85);
+  --color-accent: #a25f66;
+}
+html[data-theme="blush"][data-appearance="dark"] {
+  --color-bg: #211c1d;
+  --color-surface: #2a2426;
+  --color-surface-hover: #342c2e;
+  --color-text: #e8d8d9;
+  --color-text-muted: #a99496;
+  --color-text-faint: #6d5c5e;
+  --color-border: #342c2e;
+  --color-border-strong: #443a3c;
+  --chrome-bg: rgba(33, 28, 29, 0.85);
+  --color-accent: #cf8b93;
+}
+
+html[data-theme="eink"][data-appearance="light"] {
+  --color-bg: #f4f4f2;
+  --color-surface: #ffffff;
+  --color-surface-hover: #e8e8e6;
+  --color-text: #161616;
+  --color-text-muted: #5a5a5a;
+  --color-text-faint: #969696;
+  --color-border: #dcdcda;
+  --color-border-strong: #c2c2c0;
+  --chrome-bg: rgba(244, 244, 242, 0.9);
+  --color-accent: #2b2b2b;
+}
+html[data-theme="eink"][data-appearance="dark"] {
+  --color-bg: #0c0c0c;
+  --color-surface: #161616;
+  --color-surface-hover: #232323;
+  --color-text: #d8d8d8;
+  --color-text-muted: #909090;
+  --color-text-faint: #5c5c5c;
+  --color-border: #262626;
+  --color-border-strong: #383838;
+  --chrome-bg: rgba(12, 12, 12, 0.9);
+  --color-accent: #c0c0c0;
+}
+
+html[data-theme="einkwarm"][data-appearance="light"] {
+  --color-bg: #f2ede3;
+  --color-surface: #faf6ee;
+  --color-surface-hover: #e8e1d3;
+  --color-text: #1f1b16;
+  --color-text-muted: #635c50;
+  --color-text-faint: #9d9484;
+  --color-border: #ddd5c6;
+  --color-border-strong: #c8bfac;
+  --chrome-bg: rgba(242, 237, 227, 0.9);
+  --color-accent: #3a352c;
+}
+html[data-theme="einkwarm"][data-appearance="dark"] {
+  --color-bg: #0f0e0c;
+  --color-surface: #19170f;
+  --color-surface-hover: #26231c;
+  --color-text: #ddd6c8;
+  --color-text-muted: #948c7c;
+  --color-text-faint: #5e5749;
+  --color-border: #262219;
+  --color-border-strong: #383225;
+  --chrome-bg: rgba(15, 14, 12, 0.9);
+  --color-accent: #c3b9a4;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* ---- buttons ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  padding: 0 var(--space-5);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.005em;
+  font-weight: 600;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+/* Inverted-fill pill (solid text-color background) rather than an
+   accent-colored button — matches epub-reader's convention of reserving
+   the accent color for sparse highlights (active states, progress) instead
+   of saturating primary actions with it. */
+.btn-sm {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  font-size: 13px;
+}
+
+.btn-primary {
+  background: var(--player-text, var(--color-text));
+  color: var(--player-bg, var(--color-bg));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--player-border, var(--color-border-strong));
+  color: var(--player-text, var(--color-text));
+}
+
+.btn-outline:hover:not(:disabled) {
+  border-color: var(--player-text, var(--color-text));
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--player-text, var(--color-text-muted));
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--player-surface-hover, var(--color-surface-hover));
+}
+
+.icon-btn.active {
+  color: var(--player-accent, var(--color-accent));
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.icon-btn.ghost {
+  width: 1.7rem;
+  height: 1.7rem;
+  color: inherit;
+}
+
+/* ---- app header (shared by all routes; markup lives in AppHeader.svelte) ---- */
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-8);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-surface-hover);
+}
+
+.brand-name {
+  font: italic 500 22px/28px var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  /* Pushes this to the row's far end explicitly — redundant (but harmless)
+     on the two-item header rows that already use justify-content:
+     space-between, and the thing that actually matters on the player
+     page's merged top bar, which has more than two items in the row. */
+  margin-left: auto;
+}
+
+/* ---- nav pills (header links/buttons shared by all three pages) ---- */
+
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  font: 600 14px/20px var(--font-ui);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-pill:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+}
+
+.nav-pill:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.nav-pill .count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: 600 12px/24px var(--font-ui);
+  text-align: center;
+}
+
+/* ---- YouTube-link pill (player header + start dropzone) ---- */
+
+.linkbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 280px;
+  max-width: 440px;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+}
+
+.linkbar:focus-within {
+  border-color: var(--color-text);
+}
+
+.linkbar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: 400 15px/22px var(--font-ui);
+}
+
+.linkbar input:focus-visible {
+  outline: none;
+}
+
+.linkbar input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.linkbar .btn {
+  min-height: 34px;
+  padding: 0 14px;
+  font: 600 13px/18px var(--font-ui);
+}
+
+/* Hero variant on the start screen: sits on the page background, with an
+   outlined Load button instead of the solid one. */
+.linkbar--hero {
+  flex: none;
+  width: 100%;
+  max-width: 480px;
+  min-height: 48px;
+  background: var(--color-bg);
+}
+
+.linkbar--hero .btn {
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+/* ---- dropdown menus (header menu + player dock menus) ----
+   Components read --player-* first so the same rules work inside the
+   always-dark player card (which sets those tokens) and on light pages. */
+
+.menu-trigger {
+  position: relative;
+}
+
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;
+  z-index: 10;
+}
+
+.menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  max-height: min(60vh, 24rem);
+  padding: var(--space-2);
+  background: var(--player-surface, var(--color-surface));
+  border: 1px solid var(--player-border, var(--color-border));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  z-index: 20;
+  scrollbar-width: thin;
+}
+
+.menu-down {
+  top: calc(100% + 8px);
+  right: 0;
+}
+
+.menu-up {
+  bottom: calc(100% + 8px);
+  right: 0;
+  border-color: transparent;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--player-text, var(--color-text));
+  text-align: left;
+  text-decoration: none;
+  font: 400 15px/22px var(--font-ui);
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--player-surface-hover, var(--color-surface-hover));
+}
+
+.menu-item.is-selected {
+  font-weight: 600;
+}
+
+.menu-item svg {
+  color: var(--player-text-muted, var(--color-text-muted));
+}
+
+.menu-item-check {
+  width: 16px;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+.menu-item-check svg {
+  color: var(--player-accent, var(--color-accent));
+}
+
+.menu-label {
+  padding: var(--space-3) var(--space-3) var(--space-1);
+  color: var(--player-text-muted, var(--color-text-muted));
+  font: 600 12px/16px var(--font-ui);
+  letter-spacing: 0.02em;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: var(--space-2) var(--space-1);
+  background: var(--player-border, var(--color-border));
+  flex-shrink: 0;
+}
+
+.menu-hint {
+  margin-left: auto;
+  color: var(--color-text-faint);
+  font: 500 12px/16px var(--font-mono);
+}
+
+/* ---- segmented control (Transcript / Saved, sort orders) ---- */
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-hover);
+}
+
+.segmented button {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: 600 13px/18px var(--font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- plain checkboxes (Pause after each line, Follow, embed mode) ---- */
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font: 500 14px/20px var(--font-ui);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-text);
+}
+
+.check--accent input {
+  accent-color: var(--color-accent);
+}
+
+/* ---- keyboard key chip (shortcuts footer) ---- */
+
+.kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  font: 500 11px/1 var(--font-mono);
+}
+
+/* ---- saved-word chips ("Saved from this video" strip) ---- */
+
+.word-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 400 15px/20px var(--font-serif);
+  cursor: pointer;
+}
+
+.word-chip:hover {
+  border-color: var(--color-border-strong);
+}
+
+/* ---- recent-video card (start screen "Pick up where you left off" +
+   the Library page) ---- */
+
+.recent-card {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.recent-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: 0 1px 3px rgba(70, 45, 20, 0.06), 0 10px 24px rgba(70, 45, 20, 0.08);
+}
+
+.recent-thumb {
+  flex: none;
+  position: relative;
+  width: 120px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  background: var(--stage);
+  display: grid;
+  place-items: center;
+  color: var(--stage-muted);
+  overflow: hidden;
+}
+
+.recent-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recent-thumb .dur {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 1;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: rgba(13, 11, 9, 0.75);
+  color: var(--stage-ink);
+  font: 500 11px/16px var(--font-mono);
+}
+
+.recent-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-title {
+  font: 600 15px/22px var(--font-ui);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-meta {
+  color: var(--color-text-muted);
+  font: 400 13px/18px var(--font-ui);
+}
+
+.recent-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.recent-progress .bar {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-hover);
+  overflow: hidden;
+}
+
+.recent-progress .bar span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.recent-progress .label {
+  color: var(--color-text-muted);
+  font: 500 12px/16px var(--font-mono);
+  white-space: nowrap;
+}
+
+/* Larger button for the start-screen dropzone CTA. */
+.btn-lg {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+}
+
+/* ---- misc shared text/status ---- */
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.error-banner {
+  max-width: 40rem;
+  text-align: center;
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 30%, transparent);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* ---- modal (base container shape; pair with a page-specific class for a
+   different width/max-height, e.g. `class="modal-panel review-panel"`) ---- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 14, 0.5);
+  backdrop-filter: blur(4px);
+  border: none;
+  padding: 0;
+  z-index: 40;
+  cursor: default;
+}
+
+.modal-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: min(85vh, 42rem);
+  overflow-y: auto;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 1.4rem 1.6rem 1.6rem;
+  z-index: 50;
+
+  /* This can be reached from any component, potentially nested somewhere
+     that inherited --player-* (the always-dark player chrome's tokens) —
+     reset them back to this modal's own light palette so .btn-outline/
+     .icon-btn/.ai-explain (which read --player-* first) render correctly
+     regardless of where in the page this modal is mounted. */
+  --player-bg: var(--color-surface);
+  --player-surface: var(--color-surface);
+  --player-surface-hover: var(--color-surface-hover);
+  --player-border: var(--color-border);
+  --player-text: var(--color-text);
+  --player-text-muted: var(--color-text-muted);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.modal-close:hover {
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+}
+
+/* ---- AI explain block (word popup + vocab review card) ---- */
+
+.ai-explain {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--color-border-strong);
+}
+
+.ai-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ai-actions .ai-btn {
+  flex: 1;
+}
+
+.ai-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.ai-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-accent);
+}
+
+.popup-status {
+  color: var(--player-text-muted, var(--color-text-muted));
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.examples-text {
+  white-space: pre-line;
+}

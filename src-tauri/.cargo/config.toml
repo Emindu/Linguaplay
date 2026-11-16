@@ -1,0 +1,8 @@
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-L", "native=vlc-libs"]
+
+# libvlc.dll is GCC/MinGW-built and reads its environment at DLL-load time,
+# before any in-process std::env::set_var call in our own startup code can
+# run. Setting it here means it's already present when cargo spawns the exe.
+[env]
+VLC_PLUGIN_PATH = { value = "C:\\Program Files\\VideoLAN\\VLC\\plugins", force = false }

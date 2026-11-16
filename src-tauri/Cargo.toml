@@ -1,0 +1,57 @@
+[package]
+name = "video-learn"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "video_learn_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+vlc-rs = "0.3.0"
+reqwest = { version = "0.13.4", features = ["json"] }
+matroska-demuxer = "0.8.0"
+image = { version = "0.25.10", default-features = false, features = ["jpeg"] }
+rusqlite = { version = "0.40.1", features = ["bundled"] }
+chrono = "0.4.45"
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+# `npm run tauri dev` always builds this crate in dev (unoptimized) mode.
+# opt-level=0 makes per-frame JPEG encoding (~7ms in release) take 70-190ms,
+# turning smooth playback into a slideshow. Optimizing dependencies (built
+# once, then cached) and our own crate keeps dev iteration fast while making
+# the hot video-encode path usable during `tauri dev`.
+[profile.dev]
+opt-level = 1
+# Incremental builds combined with this mixed opt-level setup (this crate at 1,
+# dependencies at 3) intermittently fail to link with
+# "LNK2019: unresolved external symbol anon.<hash>.llvm.<n>" from serde's
+# generics. A full (non-incremental) rebuild of this crate each time is
+# slower but reliable.
+incremental = false
+
+[profile.dev.package."*"]
+opt-level = 3

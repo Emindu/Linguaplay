@@ -1,0 +1,18 @@
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Local-only: editor/agent settings and design hand-off files
+/.claude/
+/frontend-design.zip
+/Video Learn — Player Screens.html
+
+# Local test/scratch output
+*.out
