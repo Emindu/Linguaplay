@@ -16,3 +16,6 @@ vite.config.ts.timestamp-*
 
 # Local test/scratch output
 *.out
+
+# Release packaging output
+/release-dist/

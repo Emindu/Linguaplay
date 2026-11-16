@@ -83,6 +83,18 @@ the YouTube stream / download / embed decision, the download cache and
 progress channel, word lookup, spaced repetition, local LLM provisioning,
 theming and storage), see **[ARCHITECTURE.md](ARCHITECTURE.md)**.
 
+## Download
+
+Grab the latest `Linguaplay-<version>-windows-x64.zip` from the
+[Releases page](https://github.com/Emindu/Linguaplay/releases), unzip it
+anywhere, and run `Linguaplay.exe`. libVLC is included, so VLC does not need
+to be installed. For YouTube links you also need
+[`yt-dlp`](https://github.com/yt-dlp/yt-dlp) and [`ffmpeg`](https://ffmpeg.org)
+on your `PATH` (local files work without them). The build is not code-signed,
+so Windows SmartScreen may ask you to confirm ("More info", then "Run anyway").
+
+To build the zip yourself, run `scripts/package-release.ps1`.
+
 ## Getting started
 
 Windows is the platform this is developed and tested on.

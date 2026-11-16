@@ -914,10 +914,21 @@ pub fn run() {
             llm::llm_word_examples
         ])
         .setup(|app| {
-            if let Some(plugin_dir) = option_env!("VLC_PLUGIN_DIR") {
-                // SAFETY: called once during setup, before any other threads
-                // are spawned or read this process's environment.
-                unsafe { std::env::set_var("VLC_PLUGIN_PATH", plugin_dir) };
+            // A packaged release ships VLC's `plugins` folder next to the exe,
+            // and libVLC finds a `plugins` folder beside its own DLL by
+            // default, so nothing needs setting there. Only a development
+            // build, which has no such folder, falls back to the VLC install
+            // directory that build.rs found on the build machine.
+            let bundled_plugins = std::env::current_exe()
+                .ok()
+                .and_then(|exe| exe.parent().map(|dir| dir.join("plugins")))
+                .is_some_and(|dir| dir.is_dir());
+            if !bundled_plugins {
+                if let Some(plugin_dir) = option_env!("VLC_PLUGIN_DIR") {
+                    // SAFETY: called once during setup, before any other threads
+                    // are spawned or read this process's environment.
+                    unsafe { std::env::set_var("VLC_PLUGIN_PATH", plugin_dir) };
+                }
             }
 
             let instance = vlc::Instance::new()
